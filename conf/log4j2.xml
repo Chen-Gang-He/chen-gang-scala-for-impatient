@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_HOME">C:\src\IdeaProjects\chen-gang-scala-for-impatient\log</Property>
+        <Property name="LOG_BACKUP">${LOG_HOME}/backup</Property>
+        <Property name="APP_NAME">${sys:log4j2.suffix}</Property>
+        <Property name="PACKAGE_NAME">${sys:package.name}</Property>
+        <Property name="FORMAT">[%highlight{%-5level} - %d{yyyy-MM-dd HH:mm:ss} - (%c{1}:%t:%L)]
+            %m%n%throwable{short.lineNumber}
+        </Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout>
+                <pattern>${FORMAT}</pattern>
+            </PatternLayout>
+        </Console>
+        <RollingRandomAccessFile name="fileLogger" immediateFlush="true"
+                                 fileName="${LOG_HOME}/${APP_NAME}_${PACKAGE_NAME}.log"
+                                 filePattern="${LOG_BACKUP}/${APP_NAME}_${PACKAGE_NAME}_%d{yyyy-MM-dd}.log.%i">
+            <PatternLayout>
+                <pattern>${FORMAT}</pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20MB"/>
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <Filters>
+                <!-- show ALL level log-->
+                <ThresholdFilter onMismatch="DENY" onMatch="ACCEPT" level="TRACE"/>
+            </Filters>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="errorFileLogger" immediateFlush="true"
+                                 fileName="${LOG_HOME}/${APP_NAME}_${PACKAGE_NAME}_error.log"
+                                 filePattern="${LOG_BACKUP}/${APP_NAME}_${PACKAGE_NAME}_%d{yyyy-MM-dd}_error.log.%i">
+            <PatternLayout>
+                <pattern>${FORMAT}</pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20MB"/>
+                <!-- Causes a rollover once the date/time pattern no longer applies to the active file -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <Filters>
+                <!-- show ERROR level log ONLY-->
+                <ThresholdFilter onMismatch="DENY" onMatch="ACCEPT" level="ERROR"/>
+            </Filters>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <Loggers>
+        <!--<logger name="com.chengang.ch10" level="ERROR" additivity="true">-->
+        <!--<AppenderRef ref="fileLogger" />-->
+        <!--</logger>-->
+        <logger name="com.chengang" level="INFO" additivity="true">
+            <AppenderRef ref="fileLogger"/>
+        </logger>
+        <Root level="info" additivity="false">>
+            <AppenderRef ref="Console"/>
+            <!--<AppenderRef ref="fileLogger" />-->
+            <AppenderRef ref="errorFileLogger"/>
+        </Root>
+    </Loggers>
+</Configuration>
