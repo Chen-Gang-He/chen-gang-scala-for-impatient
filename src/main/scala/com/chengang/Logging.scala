@@ -2,6 +2,11 @@ package com.chengang
 
 import org.slf4j.{Logger, LoggerFactory}
 
+/**
+  * Utility trait for classes that want to log data. Creates a SLF4J logger for the class and allows
+  * logging messages at different levels using methods that only evaluate parameters lazily if the
+  * log level is enabled.
+  */
 private[chengang] trait Logging {
   val packageName: String = this.getClass.getPackage.getName.stripPrefix("package")
   val appName = "scala_for_impatient"
@@ -11,7 +16,7 @@ private[chengang] trait Logging {
 
   // Make the log field transient so that objects with Logging can
   // be serialized and used on another machine
-  @transient private var log_ : Logger = null
+  @transient private var log_ : Logger = _
 
   // Method to get the logger name for this object
   protected def logName: String = {
